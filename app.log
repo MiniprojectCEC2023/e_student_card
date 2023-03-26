@@ -1,0 +1,88 @@
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 139-447-662
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 139-447-662
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 139-447-662
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:51:30] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:51:30] "GET /static/css/styles.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:51:30] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:51:34] "GET /admin-login HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 967-505-598
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:52:50] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:52:50] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 967-505-598
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 967-505-598
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:54:40] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:54:40] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:54:48] "GET /admin-login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:54:57] "[32mPOST /admin-login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:54:57] "GET /admin-dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:54:57] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:03] "[32mGET /logout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:03] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:03] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:04] "GET /librarian-login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:21] "[32mPOST /librarian-login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:21] "GET /librarian-dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:21] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:25] "[32mGET /logout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:25] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:25] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:27] "GET /college-office-login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:39] "[32mPOST /college-office-login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:40] "GET /college-office-dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:40] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:43] "[32mGET /logout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:43] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:44] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:46] "GET /admin-login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:50] "[32mPOST /admin-login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:50] "GET /admin-dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:50] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:52] "[32mGET /logout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:52] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:52] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:53] "GET /librarian-login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:57] "[32mPOST /librarian-login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:57] "GET /librarian-dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:57] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:59] "[32mGET /logout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:55:59] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:56:00] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:56:01] "GET /college-office-login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:56:04] "[32mPOST /college-office-login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:56:04] "GET /college-office-dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:56:05] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:56:08] "[32mGET /logout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:56:08] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2023 22:56:09] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug: * Detected change in 'C:\\Users\\Lenovo\\Desktop\\mini vsc\\app.py', reloading
+INFO:werkzeug: * Restarting with stat

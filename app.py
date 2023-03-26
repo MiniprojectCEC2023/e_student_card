@@ -1,24 +1,28 @@
-from flask import Flask, render_template, request, redirect, session
-from myapp import create_app
+from flask import Flask, render_template, request, redirect, session, flash
+import logging
 
-app = create_app()
+app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
+
+
+# Define routes
 @app.route('/')
 def home():
-
     return render_template('index.html')
 
-# Define routes for the login pages for each user type
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
         if username == 'admin' and password == 'a1234':
             session['username'] = username
             return redirect('/admin-dashboard')
         else:
-            return render_template('admin-login.html', error='Invalid username or password')
+            error = 'Invalid username or password'
+            flash(error)
+            logging.warning(error)
+            return render_template('admin-login.html')
     else:
         return render_template('admin-login.html')
 
@@ -29,52 +33,65 @@ def register():
 @app.route('/librarian-login', methods=['GET', 'POST'])
 def librarian_login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
         if username == 'library' and password == 'l1234':
             session['username'] = username
             return redirect('/librarian-dashboard')
         else:
-            return render_template('librarian-login.html', error='Invalid username or password')
+            error = 'Invalid username or password'
+            flash(error)
+            logging.warning(error)
+            return render_template('librarian-login.html')
     else:
         return render_template('librarian-login.html')
 
 @app.route('/college-office-login', methods=['GET', 'POST'])
 def college_office_login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
         if username == 'office' and password == 'o1234':
             session['username'] = username
             return redirect('/college-office-dashboard')
         else:
-            return render_template('college-office-login.html', error='Invalid username or password')
+            error = 'Invalid username or password'
+            flash(error)
+            logging.warning(error)
+            return render_template('college-office-login.html')
     else:
         return render_template('college-office-login.html')
 
-# Define the dashboard routes for each user type
 @app.route('/admin-dashboard')
 def admin_dashboard():
-    if 'username' in session and session['username'] == 'admin':
+    if session.get('username') == 'admin':
         return render_template('admin-dashboard.html')
     else:
+        error = 'You need to log in as admin first.'
+        flash(error)
+        logging.warning(error)
         return redirect('/admin-login')
 
 @app.route('/librarian-dashboard')
 def librarian_dashboard():
-    if 'username' in session and session['username'] == 'library':
+    if session.get('username') == 'library':
         return render_template('librarian-dashboard.html')
     else:
+        error = 'You need to log in as librarian first.'
+        flash(error)
+        logging.warning(error)
         return redirect('/librarian-login')
 
 @app.route('/college-office-dashboard')
 def college_office_dashboard():
-    if 'username' in session and session['username'] == 'office':
+    if session.get('username') == 'office':
         return render_template('college-office-dashboard.html')
     else:
+        error = 'You need to log in as college office first.'
+        flash(error)
+        logging.warning(error)
         return redirect('/college-office-login')
 
-# Define a logout route
 @app.route('/logout')
 def logout():
     session.pop('username', None)

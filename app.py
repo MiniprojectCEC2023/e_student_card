@@ -1,8 +1,18 @@
 from flask import Flask, render_template, request, redirect, session, flash
 import logging
+from flask_mysqldb import MySQL
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
+
+# Configure MySQL
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'shibanMySQL1234@DB'
+app.config['MYSQL_DB'] = 'mini'
+
+mysql = MySQL(app)
 
 
 # Define routes
@@ -27,8 +37,51 @@ def admin_login():
         return render_template('admin-login.html')
 
 @app.route('/register')
-def register():
+def registers():
     return render_template('register.html')
+@app.route("/register-success", methods=["POST"])
+def register():
+    if request.method == 'POST':
+        name = request.form.get("name")
+        email = request.form.get("email")
+        register_number = request.form.get("register_number")
+        phone = request.form.get("phone")
+        address = request.form.get("address")
+        dob = request.form.get("dob")
+        gender = request.form.get("gender")
+        branch = request.form.get("branch")
+        semester = request.form.get("semester")
+        
+        # Check if all required fields are filled
+        if not name or not email or not register_number or not phone or not address or not dob or not gender or not branch or not semester:
+            error = 'All fields are required'
+            flash(error)
+            logging.warning(error)
+            return render_template('register.html')
+
+        # Insert data into the database
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT * FROM student WHERE email = %s OR register_number = %s', (email, register_number))
+        result = cur.fetchone()
+        if result:
+            error = 'Email or register number already exists'
+            flash(error)
+            logging.warning(error)
+            return render_template('register.html')
+
+        # Insert data into the database
+        cur.execute('INSERT INTO student (name, email, register_number, phone, address, dob, gender, branch, semester) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', (name, email, register_number, phone, address, dob, gender, branch, semester))
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Registration successful. Please log in.')
+        return redirect('/register-success')
+    else:
+        return render_template('register.html')
+
+@app.route("/register-success")
+def success():
+    return "Registration successful!"
 
 @app.route('/librarian-login', methods=['GET', 'POST'])
 def librarian_login():

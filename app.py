@@ -173,7 +173,7 @@ def college_office_dashboard():
 def view_students():
     if session.get('username') == 'admin':
         cur = mysql.connection.cursor()
-        cur.execute('SELECT name, email, register_number FROM student')
+        cur.execute('SELECT name, email, register_number,semester FROM student')
         students = cur.fetchall()
         cur.close()
         return render_template('view-students.html', students=students)
@@ -201,7 +201,27 @@ def delete_student(register_number):
         return redirect('/admin-login')
 
 
-
+@app.route('/edit-student/<register_number>', methods=['GET', 'POST'])
+def edit_student(register_number):
+    if session.get('username') == 'admin':
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT * FROM student WHERE register_number = %s', (register_number,))
+        student = cur.fetchone()
+        cur.close()
+        if request.method == 'POST':
+            semester = request.form['semester']
+            cur = mysql.connection.cursor()
+            cur.execute('UPDATE student SET semester = %s WHERE register_number = %s', (semester, register_number,))
+            mysql.connection.commit()
+            cur.close()
+            flash('Student record updated successfully')
+            return redirect('/view-students')
+        return render_template('edit-student.html', student=student)
+    else:
+        error = 'You need to log in as admin first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/admin-login') 
 
 
 @app.route('/logout')

@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, session, flash
 import logging
 from flask_mysqldb import MySQL
+import os
+import qrcode
+from io import BytesIO
 
 app = Flask(__name__)
 
@@ -79,16 +82,27 @@ def register():
             logging.warning(error)
             return render_template('register.html')
 
-        # Insert data into the database
-        cur.execute('INSERT INTO student (name, email, register_number, phone, address, dob, gender, branch, semester) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', (name, email, register_number, phone, address, dob, gender, branch, semester))
-        mysql.connection.commit()
-        cur.close()
+        # Generate the QR code
+        data = f"Name: {name}, Email: {email}, Register Number: {register_number}"
+        qr = qrcode.make(data)
+        img = BytesIO()
+        qr.save(img, "PNG")
+        img.seek(0)
 
+        # Insert data and QR code image into the database
+        cur.execute('INSERT INTO student (name, email, register_number, phone, address, dob, gender, branch, semester, qr_code) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (name, email, register_number, phone, address, dob, gender, branch, semester, img.read()))
+        mysql.connection.commit()
+
+        # Save QR code as PNG image in specified folder
+        qr_img_path = f"static/qr_codes/{register_number}.png"
+        with open(qr_img_path, 'wb') as f:
+            f.write(img.getbuffer())
+
+        cur.close()
         flash('Registration successful. Please log in.')
         return redirect('/register-success')
     else:
         return render_template('register.html')
-
 
 
 @app.route("/register-success")

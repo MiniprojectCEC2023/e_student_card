@@ -92,6 +92,7 @@ def register():
         # Insert data and QR code image into the database
         cur.execute('INSERT INTO student (name, email, register_number, phone, address, dob, gender, branch, semester, qr_code) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (name, email, register_number, phone, address, dob, gender, branch, semester, img.read()))
         mysql.connection.commit()
+        
 
         # Save QR code as PNG image in specified folder
         qr_img_path = f"static/qr_codes/{register_number}.png"
@@ -204,6 +205,7 @@ def delete_student(register_number):
     if session.get('username') == 'admin':
         cur = mysql.connection.cursor()
         cur.execute('DELETE FROM student WHERE register_number = %s', (register_number,))
+        cur.execute('DELETE FROM library WHERE register_number = %s', (register_number,))
         mysql.connection.commit()
         cur.close()
         flash('Student record deleted successfully')
@@ -220,12 +222,14 @@ def edit_student(register_number):
     if session.get('username') == 'admin':
         cur = mysql.connection.cursor()
         cur.execute('SELECT * FROM student WHERE register_number = %s', (register_number,))
+        cur.execute('SELECT * FROM library WHERE register_number = %s', (register_number,))
         student = cur.fetchone()
         cur.close()
         if request.method == 'POST':
             semester = request.form['semester']
             cur = mysql.connection.cursor()
             cur.execute('UPDATE student SET semester = %s WHERE register_number = %s', (semester, register_number,))
+            cur.execute('UPDATE library SET semester = %s WHERE register_number = %s', (semester, register_number,))
             mysql.connection.commit()
             cur.close()
             flash('Student record updated successfully')
@@ -236,6 +240,70 @@ def edit_student(register_number):
         flash(error)
         logging.warning(error)
         return redirect('/admin-login') 
+
+@app.route('/view-std-lib')
+def view_std_lib():
+    if session.get('username') == 'library':
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT name, email, register_number, semester FROM student WHERE added_to_library = FALSE')
+        students = cur.fetchall()
+        cur.close()
+        return render_template('view-std-lib.html', students=students)
+    else:
+        error = 'You need to log in as libraruan first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/librarian-login')
+
+
+
+@app.route('/add_lib/<register_number>', methods=['GET'])
+def add_to_lib(register_number):
+    if session.get('username') == 'library':
+        cur = mysql.connection.cursor()
+        cur.execute('INSERT INTO library SELECT * FROM student WHERE register_number = %s', (register_number,))
+        cur.execute('UPDATE student SET added_to_library = TRUE WHERE register_number = %s', (register_number,))
+        mysql.connection.commit()
+        cur.close()
+        flash('Student record added to library successfully')
+        return redirect('/view-std-lib')
+    else:
+        error = 'You need to log in as librarian first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/librarian-login')
+
+
+@app.route('/reg_lib')
+def reg_lib():
+    if session.get('username') == 'library':
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT name, email, register_number,semester FROM library')
+        students = cur.fetchall()
+        cur.close()
+        return render_template('reg_lib.html', students=students)
+    else:
+        error = 'You need to log in as librarian first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/librarian-login')
+
+@app.route('/lib_profile/<string:register_number>')
+def lib_profile(register_number):
+    # Get student's record from the database
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM library WHERE register_number = %s', (register_number,))
+    student = cur.fetchone()
+    cur.close()
+
+    # Check if student exists
+    if not student:
+        flash('Student not found.')
+        logging.warning('Student not found.')
+        return redirect('/')
+
+    # Render the template with the student's information
+    return render_template('lib_profile.html', student=student)
 
 
 @app.route('/logout')

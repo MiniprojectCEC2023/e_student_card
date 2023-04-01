@@ -2,9 +2,9 @@
 <html>
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-jWFGP+AAOsxIgRRxv5ar1Hth8akl5DdNV5g5rLGBchGWtLILMfI1dR+ebvMPbNRGAv8Xnyodf3c+Q2Sog0Tpgw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-Nq3EWjWb75cL81rwaIahyXhqJL8jKg5/W5G5BY04anPjkxh8JpY+ejgchzbxgejXofMFlJWIM5G5/hCG+x5aLw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
-    <title>View Students</title>
+    <title>Add Students To Library</title>
     <style>
         table {
             border-collapse: collapse;
@@ -47,8 +47,8 @@
     </style>
 </head>
 <body>
-    <h1>Registered Students</h1>
-    <a href="/admin-dashboard" class="logout-btn"><i class="fas fa-home"></i></a>
+    <h1>Add Students</h1>
+    <a href="/librarian-dashboard" class="logout-btn"><i class="fas fa-home"></i></a>
 
     {% if students %}
         <table>
@@ -58,8 +58,7 @@
                     <th>Email</th>
                     <th>Register number</th>
                     <th>Semester</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
+                    <th>Add students to library</th>
                 </tr>
             </thead>
             <tbody>
@@ -69,12 +68,12 @@
                   <td>{{ student[1] }}</td>
                   <td>{{ student[2] }}</td>
                   <td>{{ student[3] }}</td>
-                  <td><a href="/edit-student/{{ student[2] }}"><i class="fas fa-edit"></i></a></td>
                   <td>
-                      <form action="/add_lib/{{ student[2] }}" method="GET">
-                          <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
-                      </form>
-                  </td>
+                    <form action="/add_lib/{{ student[2] }}" method="GET">
+                      <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                  </form>
+                  
+                </td>
               </tr>
           {% endfor %}
           

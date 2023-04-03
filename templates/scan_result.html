@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QR Code Scanner</title>
+</head>
+<body>
+  {% if student %}
+    <h1>Student Information</h1>
+    <p>Register Number: {{ student.register_number }}</p>
+    <p>Name: {{ student.name }}</p>
+    <p>Department: {{ student.department }}</p>
+    <p>Year: {{ student.year }}</p>
+  {% else %}
+    <h1>Student Not Found</h1>
+  {% endif %}
+</body>
+</html>

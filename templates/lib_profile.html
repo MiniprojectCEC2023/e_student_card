@@ -42,28 +42,26 @@
       </tr>
       <tr>
         <th>Register Number:</th>
+        <td>{{ student[5] }}</td>
+      </tr>
+      <tr>
+        <th>Branch:</th>
+        <td>{{ student[4] }}</td>
+      </tr>
+      <tr>
+        <th>Semester:</th>
         <td>{{ student[3] }}</td>
       </tr>
       <tr>
-        <th>Books Taken:</th>
-        <td>
-          <ul>
-            <p>$</p>
-          </ul>
-        </td>
+        <th>Books Available:</th>
+        <td>{{ student[7] }}</td>
       </tr>
       <tr>
-        <th>Library Information:</th>
+        <th>Update Library Information:</th>
         <td>
           <ul>
             <li>
               <form method="POST" action="/update_library">
-                <label for="num_books">Number of Books:</label>
-                <input type="number" id="num_books" name="num_books" value="10" min="1">
-                <br>
-                <label for="due_date">Due Date:</label>
-                <input type="date" id="due_date" name="due_date">
-                <br>
                 <input type="submit" value="Update">
               </form>
             </li>
@@ -73,3 +71,4 @@
     </table>
   </body>
 </html>
+

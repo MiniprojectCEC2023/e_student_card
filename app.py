@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, session, flash
+from flask import Flask, render_template, request, redirect, session, flash,jsonify
 import logging
 from flask_mysqldb import MySQL
 import os
 import qrcode
 from io import BytesIO
-
+from PIL import Image
+from pyzbar.pyzbar import decode
 app = Flask(__name__)
 
 app.secret_key = 'your_secret_key_here'
@@ -205,7 +206,6 @@ def delete_student(register_number):
     if session.get('username') == 'admin':
         cur = mysql.connection.cursor()
         cur.execute('DELETE FROM student WHERE register_number = %s', (register_number,))
-        cur.execute('DELETE FROM library WHERE register_number = %s', (register_number,))
         mysql.connection.commit()
         cur.close()
         flash('Student record deleted successfully')
@@ -222,14 +222,12 @@ def edit_student(register_number):
     if session.get('username') == 'admin':
         cur = mysql.connection.cursor()
         cur.execute('SELECT * FROM student WHERE register_number = %s', (register_number,))
-        cur.execute('SELECT * FROM library WHERE register_number = %s', (register_number,))
         student = cur.fetchone()
         cur.close()
         if request.method == 'POST':
             semester = request.form['semester']
             cur = mysql.connection.cursor()
             cur.execute('UPDATE student SET semester = %s WHERE register_number = %s', (semester, register_number,))
-            cur.execute('UPDATE library SET semester = %s WHERE register_number = %s', (semester, register_number,))
             mysql.connection.commit()
             cur.close()
             flash('Student record updated successfully')
@@ -261,7 +259,7 @@ def view_std_lib():
 def add_to_lib(register_number):
     if session.get('username') == 'library':
         cur = mysql.connection.cursor()
-        cur.execute('INSERT INTO library SELECT * FROM student WHERE register_number = %s', (register_number,))
+        cur.execute('INSERT INTO library (id, name, email, semester, branch, register_number, qr_code, max_book) SELECT id, name, email, semester, branch, register_number, qr_code, 4 FROM student WHERE register_number = %s', (register_number,))
         cur.execute('UPDATE student SET added_to_library = TRUE WHERE register_number = %s', (register_number,))
         mysql.connection.commit()
         cur.close()
@@ -295,15 +293,32 @@ def lib_profile(register_number):
     cur.execute('SELECT * FROM library WHERE register_number = %s', (register_number,))
     student = cur.fetchone()
     cur.close()
-
     # Check if student exists
     if not student:
         flash('Student not found.')
         logging.warning('Student not found.')
         return redirect('/')
-
-    # Render the template with the student's information
+ 
+    # Render the template with the student's information and book details
     return render_template('lib_profile.html', student=student)
+
+
+@app.route('/scan_qrcode/<string:qrcode_data>')
+def scan_qrcode(qrcode_data):
+    # Get student's record from the database
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM library WHERE qrcode_data = %s', (qrcode_data,))
+    student = cur.fetchone()
+    cur.close()
+    # Check if student exists
+    if not student:
+        flash('Student not found.')
+        logging.warning('Student not found.')
+        return redirect('/')
+ 
+    # Render the template with the student's information and book details
+    return render_template('lib_profile.html', student=student)
+
 
 
 @app.route('/logout')
@@ -311,7 +326,27 @@ def logout():
     session.pop('username', None)
     return redirect('/')
 
+@app.route('/camera')
+def camera():
+    return render_template('camera.html')
 
+# Route to handle the QR code scan
+@app.route("/scan_result", methods=["POST"])
+def scan_qr_code():
+    # Get the QR code image from the request
+    qr_code_img = request.files["qr_code"]
+
+    # Decode the QR code image
+    qr_code_data = decode(Image.open(qr_code_img))[0].data.decode()
+
+    # Retrieve the student information from the database
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM student WHERE register_number = %s', (qr_code_data,))
+    student = cur.fetchone()
+    cur.close()
+
+    # Render the student information page
+    return render_template("scan_result.html", student=student)
 
 if __name__ == '__main__':
     app.run(debug=True)

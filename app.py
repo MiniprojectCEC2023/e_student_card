@@ -20,8 +20,9 @@ app.config['MYSQL_DB'] = 'mini'
 
 mysql = MySQL(app)
 
-
-# Define 
+################################################################
+#----------------------------INDEX-----------------------------#
+################################################################
 
 
 #INDEX_ROUTE
@@ -30,6 +31,14 @@ def home():
     return render_template('index.html')
 
 
+
+
+################################################################
+#----------------------------ADMIN-----------------------------#
+################################################################
+
+
+#Route to get admin login page and login to admin dashboard
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -46,13 +55,24 @@ def admin_login():
     else:
         return render_template('admin-login.html')
 
+#Route to get admin dashboard
+@app.route('/admin-dashboard')
+def admin_dashboard():
+    if session.get('username') == 'admin':
+        return render_template('admin-dashboard.html')
+    else:
+        error = 'You need to log in as admin first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/admin-login')
 
 
+#Route to get register form page
 @app.route('/register')
 def registers():
     return render_template('register.html')
 
-
+#Route to submit registration form
 @app.route("/register-success", methods=["POST"])
 def register():
     if request.method == 'POST':
@@ -106,85 +126,12 @@ def register():
     else:
         return render_template('register.html')
 
-
+#Route to return registration success message
 @app.route("/register-success")
 def success():
     return "Registration successful!"
 
-
-
-@app.route('/librarian-login', methods=['GET', 'POST'])
-def librarian_login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        if username == 'library' and password == 'l1234':
-            session['username'] = username
-            return redirect('/librarian-dashboard')
-        else:
-            error = 'Invalid username or password'
-            flash(error)
-            logging.warning(error)
-            return render_template('librarian-login.html')
-    else:
-        return render_template('librarian-login.html')
-
-
-
-@app.route('/college-office-login', methods=['GET', 'POST'])
-def college_office_login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        if username == 'office' and password == 'o1234':
-            session['username'] = username
-            return redirect('/college-office-dashboard')
-        else:
-            error = 'Invalid username or password'
-            flash(error)
-            logging.warning(error)
-            return render_template('college-office-login.html')
-    else:
-        return render_template('college-office-login.html')
-
-
-
-@app.route('/admin-dashboard')
-def admin_dashboard():
-    if session.get('username') == 'admin':
-        return render_template('admin-dashboard.html')
-    else:
-        error = 'You need to log in as admin first.'
-        flash(error)
-        logging.warning(error)
-        return redirect('/admin-login')
-
-
-
-@app.route('/librarian-dashboard')
-def librarian_dashboard():
-    if session.get('username') == 'library':
-        return render_template('librarian-dashboard.html')
-    else:
-        error = 'You need to log in as librarian first.'
-        flash(error)
-        logging.warning(error)
-        return redirect('/librarian-login')
-
-
-
-@app.route('/college-office-dashboard')
-def college_office_dashboard():
-    if session.get('username') == 'office':
-        return render_template('college-office-dashboard.html')
-    else:
-        error = 'You need to log in as college office first.'
-        flash(error)
-        logging.warning(error)
-        return redirect('/college-office-login')
-    
-
-
+#Route for students viewing for admin
 @app.route('/view-students')
 def view_students():
     if session.get('username') == 'admin':
@@ -198,25 +145,8 @@ def view_students():
         flash(error)
         logging.warning(error)
         return redirect('/admin-login')
-    
 
-
-@app.route('/delete-student/<register_number>', methods=['GET'])
-def delete_student(register_number):
-    if session.get('username') == 'admin':
-        cur = mysql.connection.cursor()
-        cur.execute('DELETE FROM student WHERE register_number = %s', (register_number,))
-        mysql.connection.commit()
-        cur.close()
-        flash('Student record deleted successfully')
-        return redirect('/view-students')
-    else:
-        error = 'You need to log in as admin first.'
-        flash(error)
-        logging.warning(error)
-        return redirect('/admin-login')
-
-
+#Route to update semester of students by admin
 @app.route('/edit-student/<register_number>', methods=['GET', 'POST'])
 def edit_student(register_number):
     if session.get('username') == 'admin':
@@ -239,6 +169,60 @@ def edit_student(register_number):
         logging.warning(error)
         return redirect('/admin-login') 
 
+     
+#Route to delete  students by admin
+@app.route('/delete-student/<register_number>', methods=['GET'])
+def delete_student(register_number):
+    if session.get('username') == 'admin':
+        cur = mysql.connection.cursor()
+        cur.execute('DELETE FROM student WHERE register_number = %s', (register_number,))
+        mysql.connection.commit()
+        cur.close()
+        flash('Student record deleted successfully')
+        return redirect('/view-students')
+    else:
+        error = 'You need to log in as admin first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/admin-login')
+
+
+
+################################################################
+#----------------------------LIBRARY---------------------------#
+################################################################
+
+#Route to get librarian login page and login to librarian dashboard
+@app.route('/librarian-login', methods=['GET', 'POST'])
+def librarian_login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if username == 'library' and password == 'l1234':
+            session['username'] = username
+            return redirect('/librarian-dashboard')
+        else:
+            error = 'Invalid username or password'
+            flash(error)
+            logging.warning(error)
+            return render_template('librarian-login.html')
+    else:
+        return render_template('librarian-login.html')
+
+
+#Route to get library dashboard
+@app.route('/librarian-dashboard')
+def librarian_dashboard():
+    if session.get('username') == 'library':
+        return render_template('librarian-dashboard.html')
+    else:
+        error = 'You need to log in as librarian first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/librarian-login')
+
+
+#Route for viewing student who does not register with library by librarian
 @app.route('/view-std-lib')
 def view_std_lib():
     if session.get('username') == 'library':
@@ -254,7 +238,7 @@ def view_std_lib():
         return redirect('/librarian-login')
 
 
-
+#Rouute for adding students to library
 @app.route('/add_lib/<register_number>', methods=['GET'])
 def add_to_lib(register_number):
     if session.get('username') == 'library':
@@ -272,6 +256,7 @@ def add_to_lib(register_number):
         return redirect('/librarian-login')
 
 
+#Route to view registered students in library
 @app.route('/reg_lib')
 def reg_lib():
     if session.get('username') == 'library':
@@ -286,6 +271,8 @@ def reg_lib():
         logging.warning(error)
         return redirect('/librarian-login')
 
+
+#Route to view each library profile of students
 @app.route('/lib_profile/<string:register_number>')
 def lib_profile(register_number):
     # Get student's record from the database
@@ -303,6 +290,11 @@ def lib_profile(register_number):
     return render_template('lib_profile.html', student=student)
 
 
+################################################################
+################################################################
+
+################################################################
+################################################################
 @app.route('/scan_qrcode/<string:qrcode_data>')
 def scan_qrcode(qrcode_data):
     # Get student's record from the database
@@ -318,13 +310,6 @@ def scan_qrcode(qrcode_data):
  
     # Render the template with the student's information and book details
     return render_template('lib_profile.html', student=student)
-
-
-
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    return redirect('/')
 
 @app.route('/camera')
 def camera():
@@ -347,6 +332,130 @@ def scan_qr_code():
 
     # Render the student information page
     return render_template("scan_result.html", student=student)
+
+################################################################
+################################################################
+
+################################################################
+################################################################
+
+
+
+################################################################
+#----------------------------OFFICE----------------------------#
+################################################################
+
+
+#Route to get office login page and login to office dashboard
+@app.route('/college-office-login', methods=['GET', 'POST'])
+def college_office_login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if username == 'office' and password == 'o1234':
+            session['username'] = username
+            return redirect('/college-office-dashboard')
+        else:
+            error = 'Invalid username or password'
+            flash(error)
+            logging.warning(error)
+            return render_template('college-office-login.html')
+    else:
+        return render_template('college-office-login.html')
+
+
+#Route to get office dashboard
+@app.route('/college-office-dashboard')
+def college_office_dashboard():
+    if session.get('username') == 'office':
+        return render_template('college-office-dashboard.html')
+    else:
+        error = 'You need to log in as college office first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/college-office-login')
+
+
+#Route for viewing student who does not register for college bus by office
+@app.route('/view-std-bus')
+def view_std_bus():
+    if session.get('username') == 'office':
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT name, email, register_number, semester FROM student WHERE added_to_bus = FALSE')
+        students = cur.fetchall()
+        cur.close()
+        return render_template('view-std-bus.html', students=students)
+    else:
+        error = 'You need to log in as  office first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/college-office-login')
+
+
+#Rouute for adding students for college bus
+@app.route('/add_bus/<register_number>', methods=['GET'])
+def add_to_bus(register_number):
+    if session.get('username') == 'office':
+        cur = mysql.connection.cursor()
+        cur.execute('INSERT INTO bus (id, name, email, semester, branch, register_number, qr_code, fee_paid) SELECT id, name, email, semester, branch, register_number, qr_code, 0 FROM student WHERE register_number = %s', (register_number,))
+        cur.execute('UPDATE student SET added_to_bus = TRUE WHERE register_number = %s', (register_number,))
+        mysql.connection.commit()
+        cur.close()
+        flash('Student record added to office successfully')
+        return redirect('/view-std-bus')
+    else:
+        error = 'You need to log in as office first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/college-office-login')
+
+
+#Route to view registered students for college bus
+@app.route('/reg_bus')
+def reg_bus():
+    if session.get('username') == 'office':
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT name, email, register_number,semester FROM bus')
+        students = cur.fetchall()
+        cur.close()
+        return render_template('reg_bus.html', students=students)
+    else:
+        error = 'You need to log in as office first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/college-office-login')
+
+
+#Route to view each college bus profile of students
+@app.route('/bus_profile/<string:register_number>')
+def bus_profile(register_number):
+    # Get student's record from the database
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM bus WHERE register_number = %s', (register_number,))
+    student = cur.fetchone()
+    cur.close()
+    # Check if student exists
+    if not student:
+        flash('Student not found.')
+        logging.warning('Student not found.')
+        return redirect('/')
+ 
+    # Render the template with the student's information and book details
+    return render_template('bus_profile.html', student=student)
+
+
+
+
+################################################################
+#----------------------------LOGOUT----------------------------#
+################################################################
+
+
+#Route for logout
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug=True)

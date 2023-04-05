@@ -47,8 +47,8 @@
     </style>
 </head>
 <body>
-    <h1>Library Students</h1>
-    <a href="/librarian-dashboard" class="logout-btn"><i class="fas fa-home"></i></a>
+    <h1>College bus Students</h1>
+    <a href="/college-office-dashboard" class="logout-btn"><i class="fas fa-home"></i></a>
 
     {% if students %}
         <table>
@@ -59,6 +59,7 @@
                     <th>Register number</th>
                     <th>Semester</th>
                     <th>View Profile</th>
+                    <th>Delete Profile</th>
                 </tr>
             </thead>
             <tbody>
@@ -69,10 +70,15 @@
                   <td>{{ student[2] }}</td>
                   <td>{{ student[3] }}</td>
                   <td>
-                    <form action="/lib_profile/{{ student[2] }}" method="GET">
+                    <form action="/bus_profile/{{ student[2] }}" method="GET">
                       <button type="submit" class="btn btn-primary"><i class="fas fa-user"></i> View Profile</button>
                   </form>                  
                   </td>
+                  <td>
+                    <form action="/delete-std-bus/{{ student[2] }}" method="GET">
+                        <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+                </td>
               </tr>
           {% endfor %}
           
@@ -83,4 +89,3 @@
     {% endif %}
 </body>
 </html>
-

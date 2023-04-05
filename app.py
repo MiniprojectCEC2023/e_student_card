@@ -51,15 +51,15 @@ def admin_login():
             error = 'Invalid username or password'
             flash(error)
             logging.warning(error)
-            return render_template('admin-login.html')
+            return render_template('admin/admin-login.html')
     else:
-        return render_template('admin-login.html')
+        return render_template('admin/admin-login.html')
 
 #Route to get admin dashboard
 @app.route('/admin-dashboard')
 def admin_dashboard():
     if session.get('username') == 'admin':
-        return render_template('admin-dashboard.html')
+        return render_template('admin/admin-dashboard.html')
     else:
         error = 'You need to log in as admin first.'
         flash(error)
@@ -70,7 +70,7 @@ def admin_dashboard():
 #Route to get register form page
 @app.route('/register')
 def registers():
-    return render_template('register.html')
+    return render_template('admin/register.html')
 
 #Route to submit registration form
 @app.route("/register-success", methods=["POST"])
@@ -91,7 +91,7 @@ def register():
             error = 'All fields are required'
             flash(error)
             logging.warning(error)
-            return render_template('register.html')
+            return render_template('admin/register.html')
 
         # Insert data into the database
         cur = mysql.connection.cursor()
@@ -101,7 +101,7 @@ def register():
             error = 'Email or register number already exists'
             flash(error)
             logging.warning(error)
-            return render_template('register.html')
+            return render_template('admin/register.html')
 
         # Generate the QR code
         data = f"Name: {name}, Email: {email}, Register Number: {register_number}"
@@ -124,7 +124,7 @@ def register():
         flash('Registration successful. Please log in.')
         return redirect('/register-success')
     else:
-        return render_template('register.html')
+        return render_template('admin/register.html')
 
 #Route to return registration success message
 @app.route("/register-success")
@@ -139,7 +139,7 @@ def view_students():
         cur.execute('SELECT name, email, register_number,semester FROM student')
         students = cur.fetchall()
         cur.close()
-        return render_template('view-students.html', students=students)
+        return render_template('admin/view-students.html', students=students)
     else:
         error = 'You need to log in as admin first.'
         flash(error)
@@ -162,7 +162,7 @@ def edit_student(register_number):
             cur.close()
             flash('Student record updated successfully')
             return redirect('/view-students')
-        return render_template('edit-student.html', student=student)
+        return render_template('admin/edit-student.html', student=student)
     else:
         error = 'You need to log in as admin first.'
         flash(error)
@@ -205,16 +205,16 @@ def librarian_login():
             error = 'Invalid username or password'
             flash(error)
             logging.warning(error)
-            return render_template('librarian-login.html')
+            return render_template('librarian/librarian-login.html')
     else:
-        return render_template('librarian-login.html')
+        return render_template('librarian/librarian-login.html')
 
 
 #Route to get library dashboard
 @app.route('/librarian-dashboard')
 def librarian_dashboard():
     if session.get('username') == 'library':
-        return render_template('librarian-dashboard.html')
+        return render_template('librarian/librarian-dashboard.html')
     else:
         error = 'You need to log in as librarian first.'
         flash(error)
@@ -230,7 +230,7 @@ def view_std_lib():
         cur.execute('SELECT name, email, register_number, semester FROM student WHERE added_to_library = FALSE')
         students = cur.fetchall()
         cur.close()
-        return render_template('view-std-lib.html', students=students)
+        return render_template('librarian/view-std-lib.html', students=students)
     else:
         error = 'You need to log in as libraruan first.'
         flash(error)
@@ -264,7 +264,7 @@ def reg_lib():
         cur.execute('SELECT name, email, register_number,semester FROM library')
         students = cur.fetchall()
         cur.close()
-        return render_template('reg_lib.html', students=students)
+        return render_template('librarian/reg_lib.html', students=students)
     else:
         error = 'You need to log in as librarian first.'
         flash(error)
@@ -287,8 +287,25 @@ def lib_profile(register_number):
         return redirect('/')
  
     # Render the template with the student's information and book details
-    return render_template('lib_profile.html', student=student)
+    return render_template('librarian/lib_profile.html', student=student)
 
+
+#Route to delete library profile
+@app.route('/delete-std-lib/<register_number>', methods=['GET'])
+def delete_std_lib(register_number):
+    if session.get('username') == 'library':
+        cur = mysql.connection.cursor()
+        cur.execute('DELETE FROM library WHERE register_number = %s', (register_number,))
+        cur.execute('UPDATE student SET added_to_library = FALSE WHERE register_number = %s', (register_number,))
+        mysql.connection.commit()
+        cur.close()
+        flash('Student record deleted successfully')
+        return redirect('/reg_lib')
+    else:
+        error = 'You need to log in as librarian first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/librarian-login')
 
 ################################################################
 ################################################################
@@ -309,11 +326,11 @@ def scan_qrcode(qrcode_data):
         return redirect('/')
  
     # Render the template with the student's information and book details
-    return render_template('lib_profile.html', student=student)
+    return render_template('librarian/lib_profile.html', student=student)
 
 @app.route('/camera')
 def camera():
-    return render_template('camera.html')
+    return render_template('librarian/camera.html')
 
 # Route to handle the QR code scan
 @app.route("/scan_result", methods=["POST"])
@@ -331,7 +348,7 @@ def scan_qr_code():
     cur.close()
 
     # Render the student information page
-    return render_template("scan_result.html", student=student)
+    return render_template("librarian/scan_result.html", student=student)
 
 ################################################################
 ################################################################
@@ -359,16 +376,16 @@ def college_office_login():
             error = 'Invalid username or password'
             flash(error)
             logging.warning(error)
-            return render_template('college-office-login.html')
+            return render_template('office/college-office-login.html')
     else:
-        return render_template('college-office-login.html')
+        return render_template('office/college-office-login.html')
 
 
 #Route to get office dashboard
 @app.route('/college-office-dashboard')
 def college_office_dashboard():
     if session.get('username') == 'office':
-        return render_template('college-office-dashboard.html')
+        return render_template('office/college-office-dashboard.html')
     else:
         error = 'You need to log in as college office first.'
         flash(error)
@@ -384,7 +401,7 @@ def view_std_bus():
         cur.execute('SELECT name, email, register_number, semester FROM student WHERE added_to_bus = FALSE')
         students = cur.fetchall()
         cur.close()
-        return render_template('view-std-bus.html', students=students)
+        return render_template('office/view-std-bus.html', students=students)
     else:
         error = 'You need to log in as  office first.'
         flash(error)
@@ -418,7 +435,7 @@ def reg_bus():
         cur.execute('SELECT name, email, register_number,semester FROM bus')
         students = cur.fetchall()
         cur.close()
-        return render_template('reg_bus.html', students=students)
+        return render_template('office/reg_bus.html', students=students)
     else:
         error = 'You need to log in as office first.'
         flash(error)
@@ -441,10 +458,25 @@ def bus_profile(register_number):
         return redirect('/')
  
     # Render the template with the student's information and book details
-    return render_template('bus_profile.html', student=student)
+    return render_template('office/bus_profile.html', student=student)
 
 
-
+#Route to delete college bus profile
+@app.route('/delete-std-bus/<register_number>', methods=['GET'])
+def delete_std_bus(register_number):
+    if session.get('username') == 'office':
+        cur = mysql.connection.cursor()
+        cur.execute('DELETE FROM bus WHERE register_number = %s', (register_number,))
+        cur.execute('UPDATE student SET added_to_bus = FALSE WHERE register_number = %s', (register_number,))
+        mysql.connection.commit()
+        cur.close()
+        flash('Student record deleted successfully')
+        return redirect('/reg_bus')
+    else:
+        error = 'You need to log in as office first.'
+        flash(error)
+        logging.warning(error)
+        return redirect('/college-office-login')
 
 ################################################################
 #----------------------------LOGOUT----------------------------#

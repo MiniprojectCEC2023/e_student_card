@@ -494,6 +494,33 @@ def update_infobus(register_number):
   cur.close()
   return render_template('office/bus_profile.html', student=student)
 
+
+@app.route('/update_bus_route/<register_number>', methods=['POST'])
+def update_bus_route(register_number):
+  # Update the route information in your database or data structure
+  route_name = request.form.get('route_name')
+  cur = mysql.connection.cursor()
+  cur.execute('SELECT * FROM bus WHERE register_number = %s', (register_number,))
+  student = cur.fetchone()
+  cur.execute('UPDATE bus SET route_name= %s  WHERE register_number = %s', (route_name,register_number))
+  mysql.connection.commit()
+  
+  cur.execute('SELECT fee_per_semester FROM routes WHERE route_name= %s', (route_name,))
+  fee = cur.fetchone()
+  
+  if fee is None:
+      # Handle the case where the route_name is not found
+      return "Route not found"
+  
+  cur.execute('UPDATE bus SET fee_per_semester= %s  WHERE register_number = %s', (fee[0],register_number))
+  mysql.connection.commit()
+  
+  cur.close()
+  return render_template('office/bus_profile.html', student=student)
+
+
+
+
 #Route to delete college bus profile
 @app.route('/delete-std-bus/<register_number>', methods=['GET'])
 def delete_std_bus(register_number):

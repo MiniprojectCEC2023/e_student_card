@@ -2,6 +2,9 @@
 <html>
   <head>
     <title>Student Information</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-jWFGP+AAOsxIgRRxv5ar1Hth8akl5DdNV5g5rLGBchGWtLILMfI1dR+ebvMPbNRGAv8Xnyodf3c+Q2Sog0Tpgw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
       /* Add some basic styling to the page */
       body {
@@ -35,6 +38,7 @@
   </head>
   <body>
     <h1>Student Information</h1>
+    <a href="/reg_bus" class="logout-btn"><i class="fas fa-home"></i></a>
     <table>
       <tr>
         <th>Name:</th>
@@ -53,15 +57,30 @@
         <td>{{ student[3] }}</td>
       </tr>
       <tr>
-        <th>Books Available:</th>
-        <td>{{ student[7] }}</td>
+        <th>Fee paid:</th>
+
+        <td>
+          {% if student[7] == 1  %}
+          <span style="color: green;">Fee paid</span>
+          {% else %}
+            <span style="color: red;">Not paid</span>
+        {% endif %}
+        
+        </td>
       </tr>
-      <tr>
-        <th>Update office Information:</th>
+      
+      <tr id="update_bus_info">
+        <th>Update BUS Information:</th>
         <td>
           <ul>
             <li>
-              <form method="POST" action="/update_library">
+              <form method="POST" action="/update_infobus/{{ student[5] }}" id="update_form">
+                <label for="fee_paid">Fee Paid:</label>
+                <select id="fee_paid" name="fee_paid">
+                  <option value="0" {% if student[7] == "0" %}selected{% endif %}>0</option>
+                  <option value="1" {% if student[7] == "1" %}selected{% endif %}>1</option>
+                </select>
+                <br>
                 <input type="submit" value="Update">
               </form>
             </li>
@@ -69,6 +88,25 @@
         </td>
       </tr>
     </table>
+    <script>
+      const form = document.getElementById('update_form');
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        fetch(form.action, {
+          method: form.method,
+          body: formData,
+        })
+          .then(response => {
+            if (response.ok) {
+              location.reload();
+            }
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      });
+    </script>
   </body>
 </html>
 

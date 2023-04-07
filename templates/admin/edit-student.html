@@ -4,10 +4,6 @@
 <h1>Edit Student Record</h1>
 <form method="post">
   <div class="form-group">
-    <label for="name">Name</label>
-    <input type="text" class="form-control" id="name" name="name" value="{{ student.name }}" required>
-  </div>
-  <div class="form-group">
     <label for="semester">Semester</label>
     <select class="form-control" id="semester" name="semester">
       <option value="1" {% if student.semester == 1 %}selected{% endif %}>1</option>

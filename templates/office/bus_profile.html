@@ -4,37 +4,7 @@
     <title>Student Information</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-jWFGP+AAOsxIgRRxv5ar1Hth8akl5DdNV5g5rLGBchGWtLILMfI1dR+ebvMPbNRGAv8Xnyodf3c+Q2Sog0Tpgw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <style>
-      /* Add some basic styling to the page */
-      body {
-        font-family: Arial, sans-serif;
-      }
-      h1 {
-        color: #1a73e8;
-        text-align: center;
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-      th, td {
-        text-align: left;
-        padding: 8px;
-        border-bottom: 1px solid #ddd;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-      ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-      }
-      li {
-        margin: 5px 0;
-      }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
   </head>
   <body>
     <h1>Student Information</h1>
@@ -75,35 +45,40 @@
           {% else %}
             <span style="color: red;">Not paid</span>
         {% endif %}
-        
         </td>
       </tr>
       <tr>
-        <th>select routes</th>
-        <td>
-          <form id="update-route-form" action="/update_bus_route/{{ student[5] }}" method="post">
-            <label for="route_name">Select a Route:</label>
-            <select id="route_name" name="route_name">
-              <option value="Route A" {% if student[6] == "Route A" %}selected{% endif %}>Route A</option>
-              <option value="Route B" {% if student[6] == "Route B" %}selected{% endif %}>Route B</option>
-              <option value="Route C" {% if student[6] == "Route C" %}selected{% endif %}>Route C</option>
-              <option value="Route E" {% if student[6] == "Route E" %}selected{% endif %}>Route E</option>
-              <option value="Route F" {% if student[6] == "Route F" %}selected{% endif %}>Route F</option>
-              <option value="Route G" {% if student[6] == "Route G" %}selected{% endif %}>Route G</option>
-              <option value="Route H" {% if student[6] == "Route H" %}selected{% endif %}>Route H</option>
-              <option value="Route I" {% if student[6] == "Route I" %}selected{% endif %}>Route I</option>
-              <option value="Route J" {% if student[6] == "Route J" %}selected{% endif %}>Route J</option>
-            </select>
-            <br>
-            <input type="submit" value="Update Route">
-          </form>
-          
-          
-          
-        </td>
+        <th>Update details:</th>
+        <td> <button onclick="toggleTable()">Update</button> </td>
+        
       </tr>
-      <tr id="update_bus_info">
-        <th>Update BUS Information:</th>
+      <tr>
+    </table>
+    
+     <table id="myTable" style="display:none;">
+      <tr>
+        <th>Update route:</th>
+        <td>    
+          <form id="update-route-form" action="/update_bus_route/{{ student[5] }}" method="post">
+          <label for="route_name">Select a Route:</label>
+          <select id="route_name" name="route_name">
+            <option value="Route A" {% if student[6] == "Route A" %}selected{% endif %}>Route A</option>
+            <option value="Route B" {% if student[6] == "Route B" %}selected{% endif %}>Route B</option>
+            <option value="Route C" {% if student[6] == "Route C" %}selected{% endif %}>Route C</option>
+            <option value="Route E" {% if student[6] == "Route E" %}selected{% endif %}>Route E</option>
+            <option value="Route F" {% if student[6] == "Route F" %}selected{% endif %}>Route F</option>
+            <option value="Route G" {% if student[6] == "Route G" %}selected{% endif %}>Route G</option>
+            <option value="Route H" {% if student[6] == "Route H" %}selected{% endif %}>Route H</option>
+            <option value="Route I" {% if student[6] == "Route I" %}selected{% endif %}>Route I</option>
+            <option value="Route J" {% if student[6] == "Route J" %}selected{% endif %}>Route J</option>
+          </select>
+          <br>
+          <input type="submit" value="Update Route">
+        </form>
+      </td>
+      </tr>
+      <tr>
+        <th>Update fee:</th>
         <td>
           <ul>
             <li>
@@ -114,13 +89,14 @@
                   <option value="1" {% if student[7] == "1" %}selected{% endif %}>Pay</option>
                 </select>
                 <br>
-                <input type="submit" value="Update">
+                <input type="submit" value="Update fee">
               </form>
             </li>
           </ul>
         </td>
       </tr>
     </table>
+
     <script>
       function handleSubmit(form) {
         form.addEventListener('submit', (event) => {
@@ -147,7 +123,17 @@
       const updateBusInfoForm = document.getElementById('update_form');
       handleSubmit(updateBusInfoForm);
       
-      
+
+
+
+      function toggleTable() {
+        var table = document.getElementById("myTable");
+        if (table.style.display === "none") {
+          table.style.display = "table";
+        } else {
+          table.style.display = "none";
+        }
+      }
       
 
 

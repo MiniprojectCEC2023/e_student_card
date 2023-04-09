@@ -4,37 +4,7 @@
     <title>Student Information</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-jWFGP+AAOsxIgRRxv5ar1Hth8akl5DdNV5g5rLGBchGWtLILMfI1dR+ebvMPbNRGAv8Xnyodf3c+Q2Sog0Tpgw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <style>
-      /* Add some basic styling to the page */
-      body {
-        font-family: Arial, sans-serif;
-      }
-      h1 {
-        color: #1a73e8;
-        text-align: center;
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-      th, td {
-        text-align: left;
-        padding: 8px;
-        border-bottom: 1px solid #ddd;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-      ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-      }
-      li {
-        margin: 5px 0;
-      }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
   </head>
   <body>
     <h1>Student Information</h1>
@@ -60,6 +30,13 @@
         <th>Books Available:</th>
         <td>{{ student[7] }}</td>
       </tr>
+      <tr>
+        <th>Udpdate details:</th>
+        <td> <button onclick="toggleTable()">Update</button> </td>
+      </tr>
+            
+    </table>
+      <table id="myTable" style="display:none;">
       <tr id="update_library_info">
         <th>Update Library Information:</th>
         <td>
@@ -75,7 +52,7 @@
                   <option value="4" {% if student[7] == "4" %}selected{% endif %}>4</option>
                 </select>
                 <br>
-                <input type="submit" value="Update">
+                <button type="submit">Update</button>
               </form>
             </li>
           </ul>
@@ -102,6 +79,16 @@
             console.error(error);
           });
       });
+
+
+      function toggleTable() {
+        var table = document.getElementById("myTable");
+        if (table.style.display === "none") {
+          table.style.display = "table";
+        } else {
+          table.style.display = "none";
+        }
+      }
     </script>
     
   </body>

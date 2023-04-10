@@ -1,110 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/reg-form.css') }}">
 	<title>Student Registration Form</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			background-color: #f4f4f4;
-		}
-
-		form {
-			max-width: 500px;
-			margin: 20px auto;
-			padding: 20px;
-			background-color: #fff;
-			border-radius: 5px;
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-		}
-
-		h2 {
-			text-align: center;
-			margin-bottom: 20px;
-		}
-
-		label {
-			display: block;
-			margin-bottom: 10px;
-			font-weight: bold;
-		}
-
-		input[type="text"], input[type="email"], select {
-			width: 100%;
-			padding: 10px;
-			margin-bottom: 20px;
-			border: 1px solid #ccc;
-			border-radius: 3px;
-			box-sizing: border-box;
-		}
-
-		select {
-			height: 40px;
-		}
-
-		input[type="submit"] {
-			background-color: #4CAF50;
-			color: #fff;
-			border: none;
-			border-radius: 3px;
-			padding: 10px 20px;
-			cursor: pointer;
-		}
-
-		input[type="submit"]:hover {
-			background-color: #3e8e41;
-		}
-
-		.error {
-			color: red;
-			margin-top: -10px;
-			margin-bottom: 10px;
-			font-weight: bold;
-		}
-	</style>
 </head>
 <body>
 
 	<h1>Student Registration Form</h1>
 
-
+<div class="reg">
 	<form action="/register-success" method="POST">
+		<div class="form-group">
+			<label for="name">Name:</label>
+			<input type="text" class="form-control" id="name" name="name" required pattern="[A-Za-z -]+" placeholder="John Doe">
+		</div>
+		<div class="form-group">
+			<label for="email">Email:</label>
+			<input type="email" class="form-control" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" placeholder="johndoe@example.com">
 
-		<label for="name">Name:</label>
-		<input type="text" id="name" name="name" required><br><br>
-
-		<label for="email">Email:</label>
-		<input type="email" id="email" name="email" required><br><br>
-
-		
-		<label for="register_number">Register Number:</label>
-		<input type="text" id="register_number" name="register_number" required><br><br>
-
-		<label for="phone">Phone Number:</label>
-		<input type="tel" id="phone" name="phone" required><br><br>
-
-		<label for="address">Address:</label>
-		<textarea id="address" name="address" required></textarea><br><br>
-
-		<label for="dob">Date of Birth:</label>
-		<input type="date" id="dob" name="dob" required><br><br>
-
-		<label for="gender">Gender:</label>
-		<input type="radio" id="male" name="gender" value="male" required>
-		<label for="male">Male</label>
-		<input type="radio" id="female" name="gender" value="female" required>
-		<label for="female">Female</label><br><br>
-
-		<label for="branch">Branch:</label>
-		<select id="branch" name="branch" required>
+		</div>
+		<div class="form-group">
+			<label for="register_number">Register Number:</label>
+			<input type="text" class="form-control" id="register_number" name="register_number" required pattern="([cC][eE][cC]|[lL][cC][eE][cC])[0-9]{2}([cC][sS]|[eE][cC]|[eE][eE][eE])[0-9]{3}" placeholder="CEC02CS001">
+		</div>
+		<div class="form-group">
+			<label for="phone">Phone Number:</label>
+			<input type="tel" class="form-control" id="phone" name="phone" required pattern="[0-9]{10}" placeholder="9876543210"> <label for="phone">Phone Number:</label>
+		</div>
+		<div class="form-group">
+		  <label for="address">Address:</label>
+		  <textarea class="form-control" id="address" name="address" required></textarea>
+		</div>
+		<div class="form-group">
+		  <label for="dob">Date of Birth:</label>
+		  <input type="date" class="form-control" id="dob" name="dob" required>
+		</div>
+		<div class="form-group">
+		  <label for="gender">Gender:</label><br>
+		  <div class="form-check form-check-inline">
+			<input type="radio" class="form-check-input" id="male" name="gender" value="male" required>
+			<label class="form-check-label" for="male">Male</label>
+		  </div>
+		  <div class="form-check form-check-inline">
+			<input type="radio" class="form-check-input" id="female" name="gender" value="female" required>
+			<label class="form-check-label" for="female">Female</label>
+		  </div>
+		</div>
+		<div class="form-group">
+		  <label for="branch">Branch:</label>
+		  <select class="form-control" id="branch" name="branch" required>
 			<option value="">Select Branch</option>
 			<option value="Computer Science">Computer Science</option>
 			<option value="Electronics and Communication">Electronics and Communication</option>
 			<option value="Mechanical">Mechanical</option>
 			<option value="Civil">Civil</option>
-		</select><br><br>
-
-		<label for="semester">Semester:</label>
-		<select id="semester" name="semester" required>
+		  </select>
+		</div>
+		<div class="form-group">
+		  <label for="semester">Semester:</label>
+		  <select class="form-control" id="semester" name="semester" required>
 			<option value="">Select Semester</option>
 			<option value="1st">1st</option>
 			<option value="2nd">2nd</option>
@@ -114,12 +68,11 @@
 			<option value="6th">6th</option>
 			<option value="7th">7th</option>
 			<option value="8th">8th</option>
-		</select><br><br>
-
-
-		<input type="submit" value="Register">
-
-	</form>
+		  </select>
+		</div>
+		<button type="submit" class="btn btn-primary">Register</button>
+	  </form>
 	  
+</div>
 </body>
 </html>

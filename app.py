@@ -1,14 +1,18 @@
 from flask import Flask, render_template, request, redirect, session, flash,jsonify
-import logging
 from flask_mysqldb import MySQL
-import os
 import qrcode
 from io import BytesIO
+import PIL
 from PIL import Image
 from pyzbar.pyzbar import decode
-app = Flask(__name__)
-
-app.secret_key = 'your_secret_key_here'
+import base64
+import logging
+import os
+import math
+from typing import List, Tuple
+from mysql.connector import connect, Error
+import binascii
+from waitress import serve
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
@@ -146,7 +150,7 @@ def view_students():
         logging.warning(error)
         return redirect('/admin-login')
 
-#Route to update semester of students by admin
+# Route to update semester of students by admin
 @app.route('/edit-student/<register_number>', methods=['GET', 'POST'])
 def edit_student(register_number):
     if session.get('username') == 'admin':
@@ -162,12 +166,15 @@ def edit_student(register_number):
             cur.close()
             flash('Student record updated successfully')
             return redirect('/view-students')
-        return render_template('admin/edit-student.html', student=student)
+        name = student[1]  # get student name from database
+        return render_template('admin/edit-student.html', name=name, student=student)
     else:
         error = 'You need to log in as admin first.'
         flash(error)
         logging.warning(error)
-        return redirect('/admin-login') 
+        return redirect('/admin-login')
+
+
 
      
 #Route to delete  students by admin
@@ -289,6 +296,20 @@ def lib_profile(register_number):
     # Render the template with the student's information and book details
     return render_template('librarian/lib_profile.html', student=student)
 
+@app.route('/update_info/<string:register_number>', methods=['POST'])
+def update_info(register_number):
+  books_available = request.form.get('books_available')
+  # Update the student information in your database or data structure
+  cur = mysql.connection.cursor()
+  cur.execute('SELECT * FROM library WHERE register_number = %s', (register_number,))
+  student = cur.fetchone()
+  cur.execute('UPDATE library SET max_book = %s  WHERE register_number = %s', (books_available, register_number))
+  mysql.connection.commit()
+  cur.close()
+  return render_template('librarian/lib_profile.html', student=student)
+
+
+
 
 #Route to delete library profile
 @app.route('/delete-std-lib/<register_number>', methods=['GET'])
@@ -307,56 +328,59 @@ def delete_std_lib(register_number):
         logging.warning(error)
         return redirect('/librarian-login')
 
-################################################################
-################################################################
-
-################################################################
-################################################################
-@app.route('/scan_qrcode/<string:qrcode_data>')
-def scan_qrcode(qrcode_data):
-    # Get student's record from the database
-    cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM library WHERE qrcode_data = %s', (qrcode_data,))
-    student = cur.fetchone()
-    cur.close()
-    # Check if student exists
-    if not student:
-        flash('Student not found.')
-        logging.warning('Student not found.')
-        return redirect('/')
- 
-    # Render the template with the student's information and book details
-    return render_template('librarian/lib_profile.html', student=student)
-
-@app.route('/camera')
-def camera():
-    return render_template('librarian/camera.html')
-
-# Route to handle the QR code scan
-@app.route("/scan_result", methods=["POST"])
-def scan_qr_code():
-    # Get the QR code image from the request
-    qr_code_img = request.files["qr_code"]
-
-    # Decode the QR code image
-    qr_code_data = decode(Image.open(qr_code_img))[0].data.decode()
-
-    # Retrieve the student information from the database
-    cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM student WHERE register_number = %s', (qr_code_data,))
-    student = cur.fetchone()
-    cur.close()
-
-    # Render the student information page
-    return render_template("librarian/scan_result.html", student=student)
-
-################################################################
-################################################################
-
-################################################################
-################################################################
 
 
+@app.route('/lib_profile_qr', methods=['GET', 'POST'])
+def lib_profile_qr():
+    if request.method == 'POST':
+        # Get the image data from the POST request
+        image_data = request.form.get('image_data')
+        if not image_data:
+            flash('Invalid image data.')
+            logging.warning('Invalid image data.')
+            return redirect('/')
+        try:
+            # Add padding if necessary
+            padding_length = 4 - len(image_data) % 4
+            if padding_length == 4:
+                padding_length = 0
+            padding = b'=' * padding_length
+            image_bytes = base64.b64decode(image_data.encode('utf-8') + padding)
+        except binascii.Error as e:
+            flash('Invalid base64-encoded image data.')
+            logging.warning(f'Invalid base64-encoded image data: {e}')
+            return redirect('/')
+
+        # Open the image using PIL Image module
+        try:
+            image = Image.open(BytesIO(image_bytes))
+            # Decode the QR code from the image
+            qr_code = decode(image)
+            # Get the register number from the QR code
+            register_number = qr_code[0].data.decode('utf-8')
+
+            # Get student's record from the database
+            connection, cursor = connect_to_database()
+            if not connection or not cursor:
+                return "Error connecting to the database."
+            cursor.execute('SELECT * FROM library WHERE register_number = %s', (register_number,))
+            student = cursor.fetchone()
+            connection.close()
+            # Check if student exists
+            if not student:
+                flash('Student not found.')
+                logging.warning('Student not found.')
+                return redirect('/')
+
+            # Render the template with the student's information and book details
+            return render_template('librarian/lib_profile.html', student=student) 
+        except PIL.UnidentifiedImageError as e:
+            # return an error message to the user or log the error
+            print(f"Error: {e}")
+            return "Error: Invalid image file."
+
+    # Render the template for scanning QR code
+    return render_template('librarian/scan_qr_code.html')
 
 ################################################################
 #----------------------------OFFICE----------------------------#
@@ -461,6 +485,45 @@ def bus_profile(register_number):
     return render_template('office/bus_profile.html', student=student)
 
 
+@app.route('/update_infobus/<string:register_number>', methods=['POST'])
+def update_infobus(register_number):
+  fee_paid = request.form.get('fee_paid')
+  # Update the student information in your database or data structure
+  cur = mysql.connection.cursor()
+  cur.execute('SELECT * FROM bus WHERE register_number = %s', (register_number,))
+  student = cur.fetchone()
+  cur.execute('UPDATE bus SET fee_paid = %s  WHERE register_number = %s', (fee_paid, register_number))
+  mysql.connection.commit()
+  cur.close()
+  return render_template('office/bus_profile.html', student=student)
+
+
+@app.route('/update_bus_route/<register_number>', methods=['POST'])
+def update_bus_route(register_number):
+  # Update the route information in your database or data structure
+  route_name = request.form.get('route_name')
+  cur = mysql.connection.cursor()
+  cur.execute('SELECT * FROM bus WHERE register_number = %s', (register_number,))
+  student = cur.fetchone()
+  cur.execute('UPDATE bus SET route_name= %s  WHERE register_number = %s', (route_name,register_number))
+  mysql.connection.commit()
+  
+  cur.execute('SELECT fee_per_semester FROM routes WHERE route_name= %s', (route_name,))
+  fee = cur.fetchone()
+  
+  if fee is None:
+      # Handle the case where the route_name is not found
+      return "Route not found"
+  
+  cur.execute('UPDATE bus SET fee_per_semester= %s  WHERE register_number = %s', (fee[0],register_number))
+  mysql.connection.commit()
+  
+  cur.close()
+  return render_template('office/bus_profile.html', student=student)
+
+
+
+
 #Route to delete college bus profile
 @app.route('/delete-std-bus/<register_number>', methods=['GET'])
 def delete_std_bus(register_number):
@@ -489,5 +552,10 @@ def logout():
     session.pop('username', None)
     return redirect('/')
 
+    
+mode='dev'
 if __name__ == '__main__':
-    app.run(debug=True)
+    if mode=='dev':
+         app.run(host='127.0.0.1', port=5000,debug=True)
+    else:
+     serve(app, host='127.0.0.1', port=5000, threads=2, url_prefix="/cec")

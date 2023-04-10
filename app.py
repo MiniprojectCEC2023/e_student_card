@@ -150,7 +150,7 @@ def view_students():
         logging.warning(error)
         return redirect('/admin-login')
 
-#Route to update semester of students by admin
+# Route to update semester of students by admin
 @app.route('/edit-student/<register_number>', methods=['GET', 'POST'])
 def edit_student(register_number):
     if session.get('username') == 'admin':
@@ -166,12 +166,15 @@ def edit_student(register_number):
             cur.close()
             flash('Student record updated successfully')
             return redirect('/view-students')
-        return render_template('admin/edit-student.html', student=student)
+        name = student[1]  # get student name from database
+        return render_template('admin/edit-student.html', name=name, student=student)
     else:
         error = 'You need to log in as admin first.'
         flash(error)
         logging.warning(error)
-        return redirect('/admin-login') 
+        return redirect('/admin-login')
+
+
 
      
 #Route to delete  students by admin

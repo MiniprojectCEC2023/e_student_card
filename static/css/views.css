@@ -31,7 +31,7 @@ body {
   
   /* Style the table headers */
   thead th {
-    background-color: #333;
+    background-color: #110760;
     color: #fff;
     text-align: left;
     padding: 10px;
@@ -67,14 +67,14 @@ body {
   /* Style the Edit and Delete icons */
   i.fas {
     font-size: 20px;
-    color: #333;
+    color: #000000;
     cursor: pointer;
     margin-right: 10px;
   }
   
   /* Style the Delete button */
   .btn-danger {
-    background-color: #e9736100;
+    background-color: #00000000;
     color: #fff;
     border: none;
     padding: 10px 15px;
@@ -89,7 +89,7 @@ body {
   }
   
   button {
-    background-color: #e9736100;
+    background-color: #00000000;
     color: #fff;
     border: none;
     border-radius: 3px;
